@@ -13,8 +13,8 @@
         <TextView
                 android:id="@+id/tv_android"
                 android:text="@string/defaultText"
-                android:textSize="24sp"
-                android:layout_marginBottom="4dp"
+                android:textSize="18sp"
+                android:layout_margin="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         <ImageView

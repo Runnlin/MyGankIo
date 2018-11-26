@@ -9,7 +9,11 @@ import github.runnlin.io.mygank.R
  * @author Runnlin
  * @date 2018/11/21/0021.
  */
-class SettingFragment: PreferenceFragmentCompat() {
+class SettingFragment : PreferenceFragmentCompat() {
+
+//    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+//    private val kv = MMKV.defaultMMKV()
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
     }

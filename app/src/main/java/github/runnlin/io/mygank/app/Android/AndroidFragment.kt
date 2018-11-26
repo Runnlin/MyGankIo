@@ -2,23 +2,19 @@ package github.runnlin.io.mygank.app.Android
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import android.widget.Toast
-import github.runnlin.io.mygank.MyApplication
-import github.runnlin.io.mygank.app.base.BaseConfig
 import github.runnlin.io.mygank.R
+import github.runnlin.io.mygank.app.base.BaseConfig
 import github.runnlin.io.mygank.app.base.BaseFragment
 import github.runnlin.io.mygank.http.GankResultBean
 import github.runnlin.io.mygank.http.ResultsBean
 import github.runnlin.io.mygank.http.RxGankService
 import kotlinx.android.synthetic.main.fragment_android.*
-import kotlinx.android.synthetic.main.fragment_android.view.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,9 +26,9 @@ import rx.schedulers.Schedulers
  * @author Runnlin
  * @date 2018/11/21/0021.
  */
-class AndroidFragment : BaseFragment() {
+class AndroidFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener {
 
-
+    private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var retrofit: Retrofit
     private lateinit var rxGankService: RxGankService
     private lateinit var observable: Observable<GankResultBean>
@@ -63,7 +59,16 @@ class AndroidFragment : BaseFragment() {
     }
 
     private fun initView(view: View) {
-        view.btn_android.setOnClickListener(this)
+//        view.btn_android.setOnClickListener(this)
+        swipeContainer = fragment_android
+        swipeContainer.setOnRefreshListener(this)
+        swipeContainer.setProgressViewOffset(true, 0, 100)
+        swipeContainer.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
 
         androidAdapter = AndroidAdapter(dataList)
         rv_android.layoutManager = LinearLayoutManager(context)
@@ -72,10 +77,15 @@ class AndroidFragment : BaseFragment() {
     }
 
     override fun onClick(v: View?) {
-        v!!.btn_android.text = "Loading..."
-        if (v == btn_android)
-            requestData()
+
     }
+
+    override fun onRefresh() {
+        clear()
+        swipeContainer.isRefreshing = true
+        requestData()
+    }
+
 
     private fun initData() {
         retrofit = Retrofit.Builder()
@@ -87,6 +97,11 @@ class AndroidFragment : BaseFragment() {
 
         rxGankService = retrofit.create(RxGankService::class.java)
         observable = rxGankService.getAndroidData(pageNum)
+    }
+
+    private fun clear() {
+        dataList.clear()
+        androidAdapter.notifyDataSetChanged()
     }
 
     override fun requestData(): Any {
@@ -106,11 +121,11 @@ class AndroidFragment : BaseFragment() {
             }, {
                 //onError
                 it.printStackTrace()
-                view!!.btn_android.text = "Load error"
+                swipeContainer.isRefreshing = false
             }, {
                 //onCompleted
-                view!!.btn_android.text = "Load completed!"
                 androidAdapter.notifyDataSetChanged()
+                swipeContainer.isRefreshing = false
             })
     }
 }

@@ -1,29 +1,20 @@
 package github.runnlin.io.mygank.app.gallery
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import github.runnlin.io.mygank.MyApplication
 import github.runnlin.io.mygank.R
-import github.runnlin.io.mygank.R.id.recycler_view
-import github.runnlin.io.mygank.R.id.show_img
-import github.runnlin.io.mygank.app.Android.AndroidAdapter
 import github.runnlin.io.mygank.app.base.BaseConfig
 import github.runnlin.io.mygank.http.GankResultBean
 import github.runnlin.io.mygank.http.ResultsBean
 import github.runnlin.io.mygank.http.RxGankService
 import github.runnlin.io.mygank.utils.ToastUtils
-import kotlinx.android.synthetic.main.fragment_android.*
 import kotlinx.android.synthetic.main.fragment_gallery.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
@@ -37,7 +28,8 @@ import java.util.concurrent.TimeUnit
  * @author Runnlin
  * @date 2018/11/22/0022.
  */
-class GalleryFragment : Fragment() {
+class GalleryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+
 
     private lateinit var retrofit: Retrofit
     private lateinit var rxGankService: RxGankService
@@ -52,7 +44,6 @@ class GalleryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        mySwipeRefreshLayout = SwipeRefreshLayout(activity!!.applicationContext)
         return inflater.inflate(
             R.layout.fragment_gallery,
             container, false
@@ -64,9 +55,6 @@ class GalleryFragment : Fragment() {
 
         initData()
         initView()
-
-        loadData()
-//        loadNext()
     }
 
     private fun initData() {
@@ -75,19 +63,6 @@ class GalleryFragment : Fragment() {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//用来适配RxJava
             .build()
-        //set draw down location
-        mySwipeRefreshLayout.setProgressViewOffset(true, 50, 200)
-
-        //set cycle size
-        mySwipeRefreshLayout.setSize(SwipeRefreshLayout.DEFAULT)
-
-        //set cycle color
-        mySwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright)
-
-        //set background
-        mySwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
-            android.R.color.holo_red_dark
-        )
     }
 
     private fun initView() {
@@ -95,21 +70,36 @@ class GalleryFragment : Fragment() {
         recycler_view.adapter = imageAdapter
         imageAdapter.bindToRecyclerView(recycler_view)
         recycler_view.setHasFixedSize(true)
-        recycler_view.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        recycler_view.layoutManager = StaggeredGridLayoutManager(
+            3, StaggeredGridLayoutManager.VERTICAL
+        )
         recycler_view.animation = null
 
-        mySwipeRefreshLayout.setOnRefreshListener{
-            imagesUrlList.clear()
-            imageAdapter.notifyDataSetChanged()
-            Toast.makeText(activity!!.applicationContext, "Reloading..", Toast.LENGTH_LONG).show()
-
-            loadData()
-        }
+        mySwipeRefreshLayout = fragment_gallery
+        mySwipeRefreshLayout.setOnRefreshListener(this)
+        //set draw down location
+        mySwipeRefreshLayout.setProgressViewOffset(true, 0, 100)
+        //set cycle size
+        mySwipeRefreshLayout.setSize(SwipeRefreshLayout.DEFAULT)
+        //set cycle color
+        mySwipeRefreshLayout.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
     }
 
-    private fun loadData() {
+    override fun onRefresh() {
+        imagesUrlList.clear()
+        imageAdapter.notifyDataSetChanged()
+        mySwipeRefreshLayout.isRefreshing = true
+        loadData(page)
+    }
+
+    private fun loadData(_page: Int) {
         rxGankService = retrofit.create(RxGankService::class.java)
-        observable = rxGankService.getFuliData(page)
+        observable = rxGankService.getFuliData(_page)
         observable
             .timeout(20, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
@@ -128,14 +118,17 @@ class GalleryFragment : Fragment() {
                 //onError
                 it.printStackTrace()
                 ToastUtils.showShort(activity!!.applicationContext, "Loading error")
+                mySwipeRefreshLayout.isRefreshing = false
             }, {
                 //onCompleted
-                ToastUtils.showShort(activity!!.applicationContext, "Loading completed")
                 imageAdapter.notifyDataSetChanged()
+                mySwipeRefreshLayout.isRefreshing = false
             })
     }
 
     private fun loadNext() {
-        loadData()
+        //TODO: 下拉加载
+        if (page < 20)
+            loadData(++page)
     }
 }

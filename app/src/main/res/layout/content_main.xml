@@ -10,6 +10,7 @@
         tools:context=".app.MainActivity">
 
     <TextView
+            android:id="@+id/tv_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|center_vertical"
@@ -17,12 +18,12 @@
 
     <android.support.v4.app.FragmentTabHost
             android:id="@+id/tabs"
-            android:layout_width ="match_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
     <!--<fragment-->
-            <!--android:name="github.runnlin.io.mygank.app.Android.AndroidFragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"/>-->
+    <!--android:name="github.runnlin.io.mygank.app.Android.AndroidFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
 
 </android.support.constraint.ConstraintLayout>

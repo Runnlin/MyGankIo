@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var androidFragment: Fragment? = null
     private var galleryFragment: Fragment? = null
     private var currentFragment: Fragment? = Fragment()
+//    private lateinit var kv:MMKV
 //    val rxPermission: RxPermissions = RxPermissions(this)
 //    var granted: Boolean = false
 
@@ -62,6 +63,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //                    Toast.makeText(this, "没有权限不保证会发生什么事", Toast.LENGTH_LONG).show()
 //                }
 //            }
+//        MMKV.initialize(this)
+//        kv = MMKV.defaultMMKV()
+//        if (kv.containsKey("isHappy")) {
+//            tv_main.append("\nWhat a happy guy it is!")
+//        }
     }
 
     private fun switchFragment(targetFragment: Fragment): FragmentTransaction {

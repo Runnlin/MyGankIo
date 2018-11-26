@@ -10,13 +10,11 @@ import android.content.Context
  */
 class MyApplication: Application() {
 
-
     companion object {
         @SuppressLint("StaticFieldLeak")
         var INSTANCE:MyApplication? = null
         @SuppressLint("StaticFieldLeak")
         var context: Context? = null
-
     }
 
     override fun onCreate() {
@@ -24,7 +22,5 @@ class MyApplication: Application() {
         INSTANCE = this
         context = this
     }
-
-
 
 }
