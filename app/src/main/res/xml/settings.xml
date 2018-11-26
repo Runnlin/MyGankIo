@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="help_category"
+        app:title="Help">
+
+        <SwitchPreferenceCompat
+                app:key="feedback"
+                app:title="Send feedback"
+                app:summary="Help us been better"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:key="about_category"
+            app:title="About">
+        <SwitchPreferenceCompat
+                app:key="about"
+                app:title="About me"
+                app:fragment=""/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

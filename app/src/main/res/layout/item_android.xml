@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/tv_android"
+                android:text="@string/defaultText"
+                android:textSize="24sp"
+                android:layout_marginBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        <ImageView
+                android:id="@+id/iv_android"
+                android:layout_width="match_parent"
+                android:scaleType="centerInside"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
